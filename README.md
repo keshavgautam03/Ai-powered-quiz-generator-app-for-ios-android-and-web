@@ -56,6 +56,24 @@ npm run live:android # Android
 3. **Interactive Quiz**: Navigate through questions with progress tracking and answer selection
 4. **Results & Feedback**: AI analyzes performance and provides personalized feedback
 
+## 🤖 AI Feedback Generation Prompt
+
+The app uses the following prompt to generate personalized feedback for users:
+
+```
+Generate personalized feedback for a quiz about ${topic}.
+The user scored ${score} out of ${totalQuestions} questions (${percentage}%).
+
+Provide encouraging and constructive feedback that:
+- Acknowledges their performance level appropriately.
+- Offers specific insights about their knowledge in ${topic}.
+- Suggests areas for improvement if score is below 80%.
+- Celebrates strong performance if score is 80% or above.
+- Remains positive and motivating.
+- Is concise (2-3 sentences for 'feedback' and 'encouragement' fields).
+- Include 1-3 specific 'suggestions' for further learning.
+```
+
 ## 🛠️ Tech Stack
 
 - **Framework**: Next.js 14 with App Router
