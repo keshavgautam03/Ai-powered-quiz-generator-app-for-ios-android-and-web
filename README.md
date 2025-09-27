@@ -83,19 +83,87 @@ Provide encouraging and constructive feedback that:
 - **Mobile**: Capacitor for native iOS/Android apps
 - **AI**: Google Gemini 2.5 Flash
 
-## 📸 Screenshots
+## 🏗️ Architecture & State Management
 
-### Web Application
+### Project Structure
 
-![Web Application - Topic Selection](./screenshots/web-app-topic-selection.png)
+```
+app/
+├── app/                          # Next.js App Router
+│   ├── page.tsx                 # Main app component with state management
+│   ├── layout.tsx              # Root layout with fonts and styling
+│   ├── globals.css             # Global styles and design tokens
+│   └── api/                    # API routes (web only)
+│       ├── generate-questions/ # AI question generation endpoint
+│       └── generate-feedback/  # AI feedback generation endpoint
+├── components/                  # React components
+│   ├── topic-selection.tsx     # Topic selection screen
+│   ├── loading-screen.tsx      # Loading states with animations
+│   ├── quiz-interface.tsx      # Main quiz navigation and display
+│   ├── results-screen.tsx      # Results and feedback display
+│   ├── mobile-layout.tsx       # Mobile-specific layout wrapper
+│   ├── error-boundary.tsx      # Error handling component
+│   └── ui/                     # Reusable UI components (shadcn/ui)
+├── lib/                        # Utility libraries
+│   ├── ai-service.ts           # Web AI service (uses API routes)
+│   ├── mobile-ai-service.ts    # Mobile AI service (direct API calls)
+│   └── utils.ts                # Utility functions
+├── types/                      # TypeScript definitions
+│   └── quiz.ts                 # Quiz interfaces and types
+├── ios/                        # iOS native project (Capacitor)
+├── android/                    # Android native project (Capacitor)
+└── public/                     # Static assets
+```
 
-### iOS Application
+### State Management Strategy
 
-![iOS Application - iPad](./screenshots/ios-app-ipad.png)
+**React useState + Props Pattern:**
 
-### Android Application
+- **Main State**: Centralized in `app/page.tsx` using `useState`
+- **Screen Navigation**: Simple enum-based screen state (`QuizScreen` type)
+- **Quiz Data**: Immutable state updates for questions and answers
+- **Error Handling**: Separate error states for different failure modes
 
-![Android Application - Emulator](./screenshots/android-app-emulator.png)
+**Why This Approach:**
+
+- **Simplicity**: No external state management needed for this scope
+- **Performance**: Minimal re-renders with proper state structure
+- **Maintainability**: Clear data flow and easy to debug
+- **Scalability**: Easy to migrate to Context API or Redux if needed
+- **Mobile Compatibility**: Works seamlessly with static export
+
+### Component Architecture
+
+**Reusable Components:**
+
+- `QuizInterface`: Handles question display, navigation, and progress
+- `LoadingScreen`: Animated loading states with topic-specific messaging
+- `TopicSelection`: Grid-based topic selection with hover effects
+- `ResultsScreen`: Score display and AI-generated feedback
+- `ErrorBoundary`: Graceful error handling with user-friendly messages
+
+**Design Patterns:**
+
+- **Composition**: Components receive data via props, maintain single responsibility
+- **Error Boundaries**: Graceful error handling with user-friendly messages
+- **Responsive Design**: Mobile-first approach with Tailwind breakpoints
+- **Platform Detection**: Automatic switching between web and mobile AI services
+
+### Mobile Architecture
+
+**Capacitor Integration:**
+
+- **Static Export**: Next.js configured for static export (`output: 'export'`)
+- **Native Wrapper**: Capacitor provides native iOS/Android wrappers
+- **Direct API Calls**: Mobile service bypasses Next.js API routes
+- **Offline Capability**: Works without server dependencies
+
+**Platform-Specific Optimizations:**
+
+- **Safe Area Handling**: Support for devices with notches and rounded corners
+- **Touch Optimizations**: 44px minimum touch targets, 16px input font size
+- **Native Plugins**: Splash screen, status bar, keyboard, and haptic feedback
+- **Performance**: Optimized bundle size and lazy loading
 
 ## 🚀 Deployment
 
