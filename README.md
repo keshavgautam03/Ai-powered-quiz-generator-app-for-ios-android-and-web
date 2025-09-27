@@ -56,6 +56,104 @@ npm run live:android # Android
 3. **Interactive Quiz**: Navigate through questions with progress tracking and answer selection
 4. **Results & Feedback**: AI analyzes performance and provides personalized feedback
 
+## 2. Problem Understanding
+
+### Core Challenge
+
+Create a cross-platform quiz application that generates personalized questions using AI and provides intelligent feedback across web, iOS, and Android platforms.
+
+### Key Requirements
+
+- **AI Integration**: Generate 5 multiple-choice questions per topic using Google Gemini
+- **Cross-Platform**: Single codebase for web and mobile (iOS/Android)
+- **User Experience**: Smooth navigation, loading states, and responsive design
+- **Feedback System**: AI-powered personalized feedback based on quiz performance
+- **Mobile Optimization**: Touch-friendly interface with native app capabilities
+
+### Assumptions Made
+
+- Users have internet connectivity for AI question generation
+- Google Gemini API will provide consistent, structured responses
+- Mobile users prefer touch-optimized interfaces over complex navigation
+- Static export approach is sufficient for mobile app functionality
+- 5 questions per quiz provides optimal user engagement without fatigue
+
+## 3. AI Prompts & Iterations
+
+### Initial Challenges
+
+- **Inconsistent JSON Structure**: AI responses varied in format and completeness
+- **Malformed Questions**: Occasional duplicate options or missing correct answers
+- **Difficulty Inconsistency**: Questions ranged from too easy to overly complex
+- **Network Reliability**: Mobile environments had intermittent API failures
+
+### Question Generation Prompt Evolution
+
+**Initial Prompt:**
+
+```
+Generate 5 quiz questions about ${topic}
+```
+
+**Issues Faced:**
+
+- No structure specification led to inconsistent formats
+- Missing validation for correct answer indices
+- No difficulty level guidance
+
+**Refined Prompt:**
+
+```
+Generate 5 multiple choice questions about ${topic}.
+Each question must be clear, educational, have exactly 4 options (index 0 to 3), and include a brief explanation.
+Ensure questions are diverse, moderately challenging, and test different knowledge areas within the topic.
+The correct answer index must be an integer between 0 and 3.
+```
+
+**System Instruction:**
+
+```
+You are an expert quiz question generator. Your only task is to generate five multiple-choice questions in the requested JSON structure.
+```
+
+### Feedback Generation Prompt Evolution
+
+**Initial Approach:**
+
+```
+Give feedback for ${score}/${totalQuestions} correct answers.
+```
+
+**Issues Faced:**
+
+- Too generic and not personalized
+- No topic-specific insights
+- Inconsistent tone and length
+
+**Final Refined Prompt:**
+
+```
+Generate personalized feedback for a quiz about ${topic}.
+The user scored ${score} out of ${totalQuestions} questions (${percentage}%).
+
+Provide encouraging and constructive feedback that:
+- Acknowledges their performance level appropriately.
+- Offers specific insights about their knowledge in ${topic}.
+- Suggests areas for improvement if score is below 80%.
+- Celebrates strong performance if score is 80% or above.
+- Remains positive and motivating.
+- Is concise (2-3 sentences for 'feedback' and 'encouragement' fields).
+- Include 1-3 specific 'suggestions' for further learning.
+```
+
+### Key Improvements Made
+
+1. **Structured Output**: Implemented Gemini JSON Schema validation
+2. **Error Handling**: Added retry logic with exponential backoff (3 retries for questions, 2 for feedback)
+3. **Mobile Optimization**: Created separate mobile-optimized AI service for static export compatibility
+4. **Fallback Systems**: Graceful degradation when AI services fail
+5. **Prompt Engineering**: Refined prompts for better question quality and feedback relevance
+
 ## 🤖 AI Feedback Generation Prompt
 
 The app uses the following prompt to generate personalized feedback for users:
@@ -164,6 +262,149 @@ app/
 - **Touch Optimizations**: 44px minimum touch targets, 16px input font size
 - **Native Plugins**: Splash screen, status bar, keyboard, and haptic feedback
 - **Performance**: Optimized bundle size and lazy loading
+
+## 6. Known Issues / Improvements
+
+### Current Limitations
+
+1. **AI Response Time**
+
+   - Occasional delays in question generation (3-5 seconds)
+   - Network dependency for AI functionality
+   - No offline question caching
+
+2. **Mobile-Specific Issues**
+
+   - Static export limitations (no server-side features)
+   - API routes don't work in mobile builds
+   - Limited offline functionality
+
+3. **User Experience**
+
+   - No adaptive difficulty based on user performance
+   - No progress tracking across sessions
+   - Limited accessibility features
+
+4. **Technical Debt**
+   - Hardcoded API key in source code (needs environment variables)
+   - No environment variable management
+   - Limited error logging and analytics
+
+### Potential Improvements
+
+#### Short-term (Next Sprint)
+
+1. **Environment Configuration**
+
+   - Move API keys to environment variables
+   - Add proper error logging
+   - Implement user analytics
+
+2. **Performance Optimizations**
+
+   - Implement question caching
+   - Add loading state improvements
+   - Optimize bundle size
+
+3. **User Experience**
+   - Add keyboard navigation support
+   - Improve accessibility (ARIA labels, screen reader support)
+   - Add haptic feedback for mobile
+
+#### Medium-term (Next Quarter)
+
+1. **Advanced Features**
+
+   - User accounts and progress tracking
+   - Adaptive difficulty system
+   - Question difficulty ratings
+   - Social features (share results, compete with friends)
+
+2. **Mobile Enhancements**
+
+   - Progressive Web App (PWA) features
+   - Offline question caching
+   - Push notifications for daily quizzes
+   - Native device integrations (camera, location)
+
+3. **AI Improvements**
+   - Multiple AI model support
+   - Question quality scoring
+   - Personalized learning paths
+   - Advanced feedback analytics
+
+#### Long-term (Future Releases)
+
+1. **Platform Expansion**
+
+   - Desktop applications (Electron)
+   - Smart TV applications
+   - Voice assistant integration
+
+2. **Advanced Analytics**
+
+   - Learning progress tracking
+   - Performance analytics dashboard
+   - A/B testing for question formats
+   - Machine learning for personalized content
+
+3. **Enterprise Features**
+   - Multi-tenant support
+   - Custom branding
+   - Admin dashboard
+   - Bulk question import/export
+
+## 7. Bonus Work
+
+### Extra Polish & Features Added
+
+1. **Smooth Animations**
+
+   - Loading spinners with topic-specific messaging
+   - Smooth transitions between quiz screens
+   - Progress bar animations
+   - Hover effects on topic selection cards
+
+2. **Enhanced UI/UX**
+
+   - Mobile-first responsive design
+   - Touch-optimized interface (44px minimum touch targets)
+   - Safe area handling for devices with notches
+   - Consistent design system using shadcn/ui components
+
+3. **Error Handling & Resilience**
+
+   - Comprehensive error boundaries
+   - Retry logic with exponential backoff
+   - Graceful fallbacks when AI services fail
+   - User-friendly error messages
+
+4. **Cross-Platform Optimization**
+
+   - Separate AI services for web and mobile
+   - Platform detection and automatic service switching
+   - Native mobile app capabilities (splash screen, status bar)
+   - Static export optimization for mobile builds
+
+5. **Developer Experience**
+
+   - TypeScript for type safety
+   - Modular component architecture
+   - Comprehensive documentation
+   - Mobile development setup guides
+
+6. **Performance Optimizations**
+
+   - Lazy loading of components
+   - Optimized bundle size
+   - Efficient state management
+   - Mobile-specific performance tuning
+
+7. **Accessibility Features**
+   - Semantic HTML structure
+   - Keyboard navigation support
+   - Screen reader compatibility
+   - High contrast support
 
 ## 🚀 Deployment
 
